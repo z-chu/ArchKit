@@ -1,0 +1,3 @@
+include ':koin-auto-service'
+include ':app'
+rootProject.name = "ArchKit"
