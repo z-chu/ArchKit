@@ -3,7 +3,6 @@ package com.github.zchu.archkit.dome
 import com.github.zchu.arch.koin.auto.service.KoinAutoInstallable
 import com.github.zchu.arch.koin.auto.service.ModuleAutoInstallable
 import com.google.auto.service.AutoService
-import org.koin.core.context.KoinContextHandler.get
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
