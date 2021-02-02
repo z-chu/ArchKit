@@ -6,10 +6,17 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
+import com.github.zchu.arch.lifecycle.rx.bindLifecycle
 import com.github.zchu.arch.mock.android.component.MockActivity
-import com.github.zchu.arch.statefulresult.*
+import com.github.zchu.arch.statefulresult.StatefulResult
+import com.github.zchu.arch.statefulresult.observeStateful
+import com.github.zchu.statefulresult.rx3.subscribeTo
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.core.qualifier.named
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     private val mTvStateful by lazy { findViewById<TextView>(R.id.tv_stateful) }
@@ -31,22 +38,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btn_stateful).setOnClickListener {
-            if (mutableLiveResult.isFailureOrNone()) {
-                mutableLiveResult.value = Loading()
-                object : Thread() {
-                    override fun run() {
-                        super.run()
-                        sleep(3000)
-                        val currentTimeMillis = System.currentTimeMillis()
-                        val l = currentTimeMillis % 2
-                        if (l == 0L) {
-                            mutableLiveResult.postValue(Failure())
-                        } else {
-                            mutableLiveResult.postValue(Success("成功拉！啦啦啦！"))
-                        }
+            Observable
+                .just("成功拉！啦啦啦！")
+                .delay(3, TimeUnit.SECONDS)
+                .take(1)
+                .map {
+                    if (System.currentTimeMillis() % 2 == 0L) {
+                        throw  RuntimeException()
+                    } else {
+                        it
                     }
-                }.start()
-            }
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeTo(mutableLiveResult)
+                .bindLifecycle(this)
         }
         mutableLiveResult
             .observeStateful(

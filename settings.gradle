@@ -1,3 +1,5 @@
+include ':lifecycle-rx3'
+include ':statefulresult-rx3'
 include ':statefulresult'
 include ':mock-android-component'
 include ':koin-auto-service'
