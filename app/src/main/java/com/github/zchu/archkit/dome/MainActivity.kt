@@ -2,14 +2,14 @@ package com.github.zchu.archkit.dome
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.github.zchu.arch.lifecycle.rx.bindLifecycle
 import com.github.zchu.arch.mock.android.component.MockActivity
-import com.github.zchu.arch.statefulresult.StatefulResult
-import com.github.zchu.arch.statefulresult.observeStateful
+import com.github.zchu.arch.statefulresult.*
 import com.github.zchu.statefulresult.rx3.subscribeTo
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -23,8 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private val autoInstallString: String by inject(named("auto_install_string"))
 
-    private val mutableLiveResult: MutableLiveData<StatefulResult<String>> =
-        MutableLiveData<StatefulResult<String>>()
+    private val mutableLiveResult: MutableLiveData<StatefulResult<String>> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btn_stateful).setOnClickListener {
             Observable
-                .just("成功拉！啦啦啦！")
+                .just("成功拉！啦啦啦！" + System.currentTimeMillis())
                 .delay(3, TimeUnit.SECONDS)
                 .take(1)
                 .map {
@@ -51,21 +50,41 @@ class MainActivity : AppCompatActivity() {
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeTo(mutableLiveResult)
+                .subscribeTo(mutableLiveResult, tag = mutableLiveResult.getSuccessValueCheckTag())
                 .bindLifecycle(this)
         }
         mutableLiveResult
             .observeStateful(
                 this,
                 onLoading = {
-                    mTvStateful.text = "加载中..."
+                    mTvStateful.text = "加载中..." + mutableLiveResult.getSuccessValueCheckTag()
+                    logLiveResult()
                 },
                 onFailure = {
-                    mTvStateful.text = "加载失败"
+                    mTvStateful.text = "加载失败" + mutableLiveResult.getSuccessValueCheckTag()
+                    logLiveResult()
                 },
                 onSuccess = {
                     mTvStateful.text = it
+                    logLiveResult()
                 }
             )
+
+    }
+
+    fun logLiveResult() {
+        val failure = mutableLiveResult.isFailure
+        val failureOrNone = mutableLiveResult.isFailureOrNone
+        val loading = mutableLiveResult.isLoading
+        val success = mutableLiveResult.isSuccess
+        val successValue = mutableLiveResult.successValue
+        val successValueCheckTag = mutableLiveResult.getSuccessValueCheckTag()
+        val resultTag = mutableLiveResult.resultTag
+        Log.d(
+            "MainActivity", "logLiveResult: isFailure=$failure , isFailureOrNone=$failureOrNone" +
+                    ", isLoading=$loading, isSuccess=$success, successValue=$successValue" +
+                    ", successValueCheckTag=$successValueCheckTag, resultTag=$resultTag"
+        )
+
     }
 }
