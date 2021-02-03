@@ -56,21 +56,30 @@ typealias LiveResult<T> = LiveData<StatefulResult<T>>
 
 typealias MutableLiveResult<T> = MutableLiveData<StatefulResult<T>>
 
-fun StatefulResult<*>.isLoading() = this is Loading
+val StatefulResult<*>.isLoading get() = this is Loading
 
-fun StatefulResult<*>.isFailure() = this is Failure
+val StatefulResult<*>.isFailure get() = this is Failure
 
-fun StatefulResult<*>.isSuccess() = this is Success
+val StatefulResult<*>.isSuccess get() = this is Success
 
-fun <T> LiveData<StatefulResult<T>>.isLoading() = value is Loading
+val <T> LiveData<StatefulResult<T>>.isLoading get() = value is Loading
 
-fun <T> LiveData<StatefulResult<T>>.isFailure() = value is Failure
+val <T> LiveData<StatefulResult<T>>.isFailure get() = value is Failure
 
-fun <T> LiveData<StatefulResult<T>>.isSuccess() = value is Success
+val <T> LiveData<StatefulResult<T>>.isSuccess get() = value is Success
 
-fun <T> LiveData<StatefulResult<T>>.isFailureOrNone() = value == null || value is Failure
+val <T> LiveData<StatefulResult<T>>.isFailureOrNone get() = value == null || value is Failure
 
-inline fun <reified T> LiveData<StatefulResult<T>>.getSuccessFromTagAndValue(): T? {
+val <T> LiveData<StatefulResult<T>>.successValue: T?
+    get() {
+        val value = value
+        if (value is Success) {
+            return value.value
+        }
+        return null
+    }
+
+inline fun <reified T> LiveData<StatefulResult<T>>.getSuccessValueCheckTag(): T? {
     val value = value
     if (value is Success) {
         return value.value
@@ -83,3 +92,7 @@ inline fun <reified T> LiveData<StatefulResult<T>>.getSuccessFromTagAndValue(): 
 }
 
 
+val <T> LiveData<StatefulResult<T>>.resultTag: Any?
+    get() {
+        return value?.tag
+    }
