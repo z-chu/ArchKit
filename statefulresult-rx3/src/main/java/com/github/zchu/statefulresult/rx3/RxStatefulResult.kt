@@ -14,6 +14,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 private val onSuccessStub: (Any) -> Unit = {}
 private val onFailureStub: (Throwable) -> Unit = {}
 
+private class ThrowableWrapper(val throwable: Throwable) : RuntimeException()
 
 @CheckReturnValue
 fun <T : Any> Observable<T>.subscribeTo(
@@ -32,10 +33,17 @@ fun <T : Any> Observable<T>.subscribeTo(
             onSuccessBefore.invoke(it)
             val success = Success(it)
             success.tag = tag
-            mutableLiveData.safeSetValue(success)
+            try {
+                mutableLiveData.safeSetValue(success)
+            } catch (e: Throwable) {
+                throw ThrowableWrapper(e)
+            }
             onSuccessAfter.invoke(it)
         },
         {
+            if (it is ThrowableWrapper) {
+                throw  it.throwable
+            }
             onFailureBefore.invoke(it)
             val failure = Failure<T>(it)
             failure.tag = tag
@@ -64,10 +72,17 @@ fun <T : Any> Flowable<T>.subscribeTo(
             onSuccessBefore.invoke(it)
             val success = Success(it)
             success.tag = tag
-            mutableLiveData.safeSetValue(success)
+            try {
+                mutableLiveData.safeSetValue(success)
+            } catch (e: Throwable) {
+                throw ThrowableWrapper(e)
+            }
             onSuccessAfter.invoke(it)
         },
         {
+            if (it is ThrowableWrapper) {
+                throw  it.throwable
+            }
             onFailureBefore.invoke(it)
             val failure = Failure<T>(it)
             failure.tag = tag
