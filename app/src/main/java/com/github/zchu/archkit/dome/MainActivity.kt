@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                 onFailure = {
                     mTvStateful.text = "加载失败" + mutableLiveResult.getSuccessValueCheckTag()
                     logLiveResult()
+
                 },
                 onSuccess = {
                     mTvStateful.text = it
