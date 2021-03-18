@@ -68,7 +68,24 @@ val <T> LiveData<StatefulResult<T>>.isFailure get() = value is Failure
 
 val <T> LiveData<StatefulResult<T>>.isSuccess get() = value is Success
 
-val <T> LiveData<StatefulResult<T>>.isFailureOrNone get() = value == null || value is Failure
+val <T> LiveData<StatefulResult<T>>.isFailureOrNone: Boolean
+    get() {
+        val localValue = value
+        return localValue == null || localValue is Failure
+    }
+
+inline fun <T> LiveData<StatefulResult<T>>.runOnFailureOrNone(block: () -> Unit) {
+    if (isFailureOrNone) {
+        block.invoke()
+    }
+}
+
+fun LiveData<StatefulResult<*>>.cancelWhenCurrentIsLoading() {
+    val localValue = value
+    if (localValue is Loading) {
+        localValue.canceler?.invoke()
+    }
+}
 
 val <T> LiveData<StatefulResult<T>>.successValue: T?
     get() {
@@ -78,6 +95,7 @@ val <T> LiveData<StatefulResult<T>>.successValue: T?
         }
         return null
     }
+
 
 inline fun <reified T> LiveData<StatefulResult<T>>.getSuccessValueCheckTag(): T? {
     val value = value
