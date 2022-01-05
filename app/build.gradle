@@ -43,15 +43,15 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation project(":koin-auto-service")
     implementation project(":mock-android-component")
-    implementation project(":statefulresult")
-    implementation project(":statefulresult-rx3")
-    implementation project(":lifecycle-rx3")
     implementation "io.reactivex.rxjava3:rxjava:3.0.4"
     implementation "io.reactivex.rxjava3:rxandroid:3.0.0"
 
     implementation 'org.koin:koin-android:2.1.6'
+    implementation 'com.github.z-chu.ArchKit:koin-auto-service:0.1.6'
+    implementation 'com.github.z-chu.ArchKit:statefulresult:0.1.6'
+    implementation 'com.github.z-chu.ArchKit:statefulresult-rx3:0.1.6'
+    implementation 'com.github.z-chu.ArchKit:lifecycle-rx3:0.1.6'
 
     implementation "com.google.auto.service:auto-service-annotations:1.0-rc6"
     annotationProcessor "com.google.auto.service:auto-service:1.0-rc6"
