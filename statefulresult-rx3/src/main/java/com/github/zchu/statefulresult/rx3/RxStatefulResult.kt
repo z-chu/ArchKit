@@ -5,6 +5,7 @@ import com.github.zchu.arch.statefulresult.Failure
 import com.github.zchu.arch.statefulresult.Loading
 import com.github.zchu.arch.statefulresult.StatefulResult
 import com.github.zchu.arch.statefulresult.Success
+import com.github.zchu.arch.statefulresult.safeSetValue
 import io.reactivex.rxjava3.annotations.CheckReturnValue
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable

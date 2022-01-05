@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.github.zchu.arch.statefulresult.Failure
 import com.github.zchu.arch.statefulresult.Loading
 import com.github.zchu.arch.statefulresult.StatefulResult
+import com.github.zchu.arch.statefulresult.safeSetValue
 import io.reactivex.rxjava3.disposables.Disposable
 import java.util.concurrent.CancellationException
 
