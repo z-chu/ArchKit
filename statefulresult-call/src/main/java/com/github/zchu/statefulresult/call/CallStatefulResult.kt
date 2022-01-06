@@ -10,6 +10,7 @@ import com.github.zchu.arch.statefulresult.bindCanceler
 import com.github.zchu.arch.statefulresult.safeSetValue
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
@@ -40,12 +41,16 @@ fun <T : Any> Call<T>.enqueueTo(
     mutableLiveData.safeSetValue(loading)
     enqueue(object : Callback<T> {
         override fun onResponse(call: Call<T>, response: Response<T>) {
-            val body = response.body()!!
-            onSuccessBefore.invoke(body)
-            val success = Success(body)
-            success.tag = tag
-            mutableLiveData.safeSetValue(success)
-            onSuccessAfter.invoke(body)
+            if (response.isSuccessful) {
+                val body = response.body() as T
+                onSuccessBefore.invoke(body)
+                val success = Success(body)
+                success.tag = tag
+                mutableLiveData.safeSetValue(success)
+                onSuccessAfter.invoke(body)
+            } else {
+                onFailure(call, HttpException(response))
+            }
         }
 
         override fun onFailure(call: Call<T>, t: Throwable) {
