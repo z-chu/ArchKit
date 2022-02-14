@@ -23,6 +23,12 @@ fun Disposable.bindLifecycle(lifecycle: Lifecycle) {
     bindLifecycle(lifecycle, Lifecycle.Event.ON_DESTROY)
 }
 
+fun Disposable.safeDispose() {
+    if (!isDisposed) {
+        dispose()
+    }
+}
+
 fun Disposable.bindLifecycle(lifecycle: Lifecycle, untilEvent: Lifecycle.Event) {
     if (untilEvent <= Lifecycle.Event.ON_RESUME || untilEvent == Lifecycle.Event.ON_ANY) {
         throw IllegalArgumentException("The parameter untilEvent($untilEvent) cannot be a positive event")
