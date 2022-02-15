@@ -5,13 +5,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.github.zchu.archkit.dome"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -47,11 +46,11 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxjava:3.0.4"
     implementation "io.reactivex.rxjava3:rxandroid:3.0.0"
 
-    implementation 'org.koin:koin-android:2.1.6'
-    implementation 'com.github.z-chu.ArchKit:koin-auto-service:0.1.6'
-    implementation 'com.github.z-chu.ArchKit:statefulresult:0.1.9'
-    implementation 'com.github.z-chu.ArchKit:statefulresult-rx3:0.1.9'
-    implementation 'com.github.z-chu.ArchKit:lifecycle-rx3:0.2.0'
+    implementation 'io.insert-koin:koin-android:3.1.4'
+    implementation project(":koin-auto-service")
+    implementation project(":statefulresult")
+    implementation project(":statefulresult-rx3")
+    implementation project(":lifecycle-rx3")
 
     implementation "com.google.auto.service:auto-service-annotations:1.0-rc6"
     annotationProcessor "com.google.auto.service:auto-service:1.0-rc6"
