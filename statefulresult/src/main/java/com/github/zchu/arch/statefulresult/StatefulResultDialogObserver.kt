@@ -1,8 +1,6 @@
 package com.github.zchu.arch.statefulresult
 
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -11,10 +9,6 @@ import androidx.lifecycle.LifecycleOwner
 abstract class StatefulResultDialogObserver<T>(
     protected val fragmentManager: FragmentManager
 ) : StatefulResultObserver<T>() {
-
-    constructor(activity: FragmentActivity) : this(activity.supportFragmentManager)
-
-    constructor(fragment: Fragment) : this(fragment.childFragmentManager)
 
     protected open val fragmentTag: String = this::class.java.name
 
