@@ -22,12 +22,12 @@ open class StatefulResultObserver<T> : Observer<StatefulResult<T>> {
     }
 
     open fun onFailure(throwable: Throwable) {
-        loggerOnFailure?.invoke(throwable.message ?: "${throwable} onFailure: message is null")
+        loggerOnFailure?.invoke(throwable)
     }
 
     companion object {
-        var loggerOnFailure: ((String) -> Unit)? = {
-            Log.e("StatefulResultObserver", it)
+        var loggerOnFailure: ((Throwable) -> Unit)? = {
+            Log.e("StatefulResultObserver", it.message ?: "${it} onFailure: message is null")
         }
 
     }
