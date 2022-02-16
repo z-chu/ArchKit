@@ -19,7 +19,7 @@ class Failure<T>(val throwable: Throwable) : StatefulResult<T>() {
 inline fun <T> StatefulResult<T>.switch(
     onLoading: (Loading<T>) -> Unit = { _ -> },
     onSuccess: (Success<T>) -> Unit = { _ -> },
-    onFailure: (Failure<T>) -> Unit = { _ -> }
+    onFailure: (Failure<T>) -> Unit = { _ -> },
 ) {
     when (this) {
         is Loading<T> -> onLoading.invoke(this)
@@ -29,7 +29,7 @@ inline fun <T> StatefulResult<T>.switch(
 }
 
 inline fun <T> StatefulResult<T>.doOnLoading(
-    onLoading: (Loading<T>) -> Unit = { _ -> }
+    onLoading: (Loading<T>) -> Unit = { _ -> },
 ) {
     if (this is Loading<T>) {
         onLoading.invoke(this)
@@ -37,7 +37,7 @@ inline fun <T> StatefulResult<T>.doOnLoading(
 }
 
 inline fun <T> StatefulResult<T>.doOnSuccess(
-    onSuccess: (Success<T>) -> Unit = { _ -> }
+    onSuccess: (Success<T>) -> Unit = { _ -> },
 ) {
     if (this is Success<T>) {
         onSuccess.invoke(this)
@@ -45,7 +45,7 @@ inline fun <T> StatefulResult<T>.doOnSuccess(
 }
 
 inline fun <T> StatefulResult<T>.doOnFailure(
-    onFailure: (Failure<T>) -> Unit = { _ -> }
+    onFailure: (Failure<T>) -> Unit = { _ -> },
 ) {
     if (this is Failure<T>) {
         onFailure.invoke(this)
@@ -89,20 +89,27 @@ fun LiveData<StatefulResult<*>>.cancelWhenCurrentIsLoading() {
 
 val <T> LiveData<StatefulResult<T>>.successValue: T?
     get() {
-        val value = value
-        if (value is Success) {
-            return value.value
+        return value?.successValue
+    }
+
+val <T> StatefulResult<T>.successValue: T?
+    get() {
+        if (this is Success) {
+            return this.value
         }
         return null
     }
 
 
 inline fun <reified T> LiveData<StatefulResult<T>>.getSuccessValueCheckTag(): T? {
-    val value = value
-    if (value is Success) {
-        return value.value
+    return value?.getSuccessValueCheckTag()
+}
+
+inline fun <reified T> StatefulResult<T>.getSuccessValueCheckTag(): T? {
+    if (this is Success) {
+        return this.value
     }
-    val tag = value?.tag
+    val tag = this.tag
     if (tag is T) {
         return tag
     }
