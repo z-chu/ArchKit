@@ -63,6 +63,9 @@ abstract class StatefulResultDialogObserver<T>(
     protected fun dismissDialogFragment() {
         val findFragmentByTag = fragmentManager.findFragmentByTag(fragmentTag)
         if (findFragmentByTag != null && findFragmentByTag is DialogFragment) {
+            lifecycleEventObserver?.let {
+                findFragmentByTag.lifecycle.removeObserver(it)
+            }
             try {
                 findFragmentByTag.dismiss()
             } catch (ignore: Exception) {
